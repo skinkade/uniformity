@@ -1,6 +1,6 @@
 (ns uniformity.random
   (:require [clojure.set :refer [intersection]]
-            [clojure.string :refer [join replace]]
+            [clojure.string :as string]
             [uniformity.util :as util]
             #?(:clj [uniformity.internals.rand-java :as internals]
                :cljs [uniformity.internals.rand-js :as internals])))
@@ -87,7 +87,7 @@
                              (when (contains? opts :digits) "0123456789")
                              (when (contains? opts :special) "!@#$%^&*-_+=")])]
        (if (contains? opts :non-ambiguous)
-         (rand-password length (replace mask #"[O01Il]" ""))
+         (rand-password length (string/replace mask #"[O01Il]" ""))
          (rand-password length mask))))))
 
 (defn rand-passphrase
@@ -97,4 +97,4 @@
    {:pre [(> length 0)
           (and (coll? wordlist) (> (count wordlist) 0))
           (or (string? delimiter) (char? delimiter))]}
-   (join delimiter (rand-selection wordlist length))))
+   (string/join delimiter (rand-selection wordlist length))))

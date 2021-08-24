@@ -1,6 +1,10 @@
 # Change Log
 All notable changes to this project will be documented in this file. This change log follows the conventions of [keepachangelog.com](http://keepachangelog.com/).
 
+## [0.1.1]
+### Changed
+- Use goog.crypt in internals.util-js in place of base64-js dependency and homebrew hex encode
+
 ## [0.1.0]
 ### Added
 JVM and ClojureScript support for cryptographically-random:
@@ -12,5 +16,5 @@ JVM and ClojureScript support for cryptographically-random:
 - collection samples
 - passwords/passphrases
 
-
+[0.1.1]: https://github.com/skinkade/uniformity/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/skinkade/uniformity/releases/tag/v0.1.0
