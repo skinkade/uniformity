@@ -1,9 +1,10 @@
 (ns uniformity.internals.util-js
-  (:require [base64-js]
+  (:require [goog.crypt :refer [byteArrayToHex hexToByteArray]]
+            [goog.crypt.base64 :as base64]
             [clojure.string :refer [replace]]))
 
 (defn base64-encode [bytes]
-  (base64-js/fromByteArray bytes))
+  (base64/encodeByteArray bytes))
 
 (defn base64-encode-urlsafe [bytes]
   (-> bytes
@@ -23,7 +24,7 @@
                    (replace "-" "+")
                    (replace "_" "/")
                    (pad-base64))]
-    (base64-js/toByteArray string)))
+    (base64/decodeStringToUint8Array string)))
 
 (defn byte->hex [byte]
   (-> byte
@@ -31,11 +32,7 @@
       (.padStart 2 "0")))
 
 (defn hex-encode [bytes]
-  (apply str (map byte->hex bytes)))
+  (byteArrayToHex bytes))
 
 (defn hex-decode [string]
-  (->> string
-       (partition 2)
-       (map #(apply str %))
-       (map #(js/parseInt % 16))
-       (.from js/Uint8Array)))
+  (hexToByteArray string))

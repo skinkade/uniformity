@@ -1,6 +1,5 @@
 {
   "dependencies": {
-    "base64-js": "^1.5.1",
     "shadow-cljs": "^2.15.2"
   }
 }
