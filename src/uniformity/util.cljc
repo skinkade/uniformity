@@ -16,3 +16,15 @@
 
 (defn hex-decode [string]
   (internals/hex-decode string))
+
+(defn json-encode [object]
+  (internals/json-encode [object]))
+
+(defn json-decode [string]
+  (internals/json-decode string))
+
+(defn str->utf8 [string]
+  (internals/str->utf8 string))
+
+(defn utf8->str [bytes]
+  (internals/utf8->str bytes))

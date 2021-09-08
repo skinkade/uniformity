@@ -41,3 +41,38 @@ clj꞉uniformity.util꞉> 
    (into [] (base64-decode "FND_t6BzewM")))
 true
 ```
+
+
+
+# JSON
+
+These functions are under-developed and should not be relied on.
+
+```clojure
+clj꞉uniformity.util꞉> (def some-struct {:foo :bar, :baz ["a" :b 3]})
+#'uniformity.util/some-struct
+
+clj꞉uniformity.util꞉> (def some-json (json-encode some-struct))
+#'uniformity.util/some-json
+
+clj꞉uniformity.util꞉> some-json
+"[{\"foo\":\"bar\",\"baz\":[\"a\",\"b\",3]}]"
+
+clj꞉uniformity.util꞉> (json-decode some-json)
+[{"foo" "bar", "baz" ["a" "b" 3]}]
+```
+
+
+
+# UTF-8
+
+```clojure
+clj꞉uniformity.util꞉> (def test-utf8 (str->utf8 "Hello world 😎"))
+#'uniformity.util/test-utf8
+
+clj꞉uniformity.util꞉> (vec test-utf8)
+[72 101 108 108 111 32 119 111 114 108 100 32 -16 -97 -104 -114]
+
+clj꞉uniformity.util꞉> (utf8->str test-utf8)
+"Hello world 😎"
+```

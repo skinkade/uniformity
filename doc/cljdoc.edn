@@ -1,3 +1,6 @@
 {:cljdoc.doc/tree [["Readme" {:file "README.md"}]
+                   ["Crypto" {:file "doc/crypto.md"}
+                    ["A note on GCM nonces" {:file "doc/crypto/gcm_nonce_note.md"}]
+                    ["Low level usage", {:file "doc/crypto/low_level_usage.md"}]]
                    ["Random" {:file "doc/random.md"}]
                    ["Util" {:file "doc/util.md"}]]}

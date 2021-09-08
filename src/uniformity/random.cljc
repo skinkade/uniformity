@@ -1,6 +1,7 @@
 (ns uniformity.random
   (:require [clojure.set :refer [intersection]]
             [clojure.string :as string]
+            [uniformity.internals.validation :refer [compat-count]]
             [uniformity.util :as util]
             #?(:clj [uniformity.internals.rand-java :as internals]
                :cljs [uniformity.internals.rand-js :as internals])))
@@ -55,9 +56,9 @@
   "Returns a cryptographically random element from a collection, or a character from a string.
   Can take a count as the second argument to return a sequence of selections."
   ([coll]
-   {:pre [(> (count coll) 0)
+   {:pre [(> (compat-count coll) 0)
           (or (coll? coll) (string? coll))]}
-   (nth coll (rand-int32 (count coll))))
+   (nth coll (rand-int32 (compat-count coll))))
   ([coll n] (repeatedly n #(rand-selection coll))))
 
 (defn rand-password
@@ -70,7 +71,7 @@
     :non-ambiguous removes O01Il"
   ([length mask-or-opts]
    {:pre [(> length 0)
-          (> (count mask-or-opts) 0)
+          (> (compat-count mask-or-opts) 0)
           (or
            (string? mask-or-opts)
            (and
@@ -95,6 +96,6 @@
   ([length wordlist] (rand-passphrase length wordlist "-"))
   ([length wordlist delimiter]
    {:pre [(> length 0)
-          (and (coll? wordlist) (> (count wordlist) 0))
+          (and (coll? wordlist) (> (compat-count wordlist) 0))
           (or (string? delimiter) (char? delimiter))]}
    (string/join delimiter (rand-selection wordlist length))))
