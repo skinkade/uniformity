@@ -61,6 +61,28 @@
    (nth coll (rand-int32 (compat-count coll))))
   ([coll n] (repeatedly n #(rand-selection coll))))
 
+(defn rand-shuffle
+  "Shuffles a collection in cryptographically random manner."
+  [coll]
+  {:added "0.2.1"
+   :pre [(or
+          (list? coll)
+          (vector? coll))
+         (> (count coll) 1)]}
+  (letfn [(durstenfeld [coll i]
+            (if (> 0 i)
+              coll
+              (let [j (rand-int32 (inc i))
+                    i-ele (nth coll i)
+                    j-ele (nth coll j)
+                    updated (-> coll
+                                (assoc i j-ele)
+                                (assoc j i-ele))]
+                (recur updated (dec i)))))]
+    (let [coll (vec coll)]
+      (durstenfeld coll
+                   (dec (count coll))))))
+
 (defn rand-password
   "Generates password, either from a character mask (provided as string), or a collection of mask option keywords.
   Mask options:

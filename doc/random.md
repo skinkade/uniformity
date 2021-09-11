@@ -165,6 +165,22 @@ clj꞉uniformity.random꞉> (rand-selection animals 3)
 
 
 
+# Shuffle
+
+```
+uniformity.random/rand-shuffle
+([coll])
+  Shuffles a collection in cryptographically random manner.
+```
+
+### Example
+
+```clojure
+clj꞉uniformity.random꞉> (rand-shuffle [1 2 3 4 5 6 7 8 9 10])
+[3 8 5 7 9 4 1 2 10 6]
+```
+
+
 # Passwords
 
 ```
