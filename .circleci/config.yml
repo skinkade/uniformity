@@ -25,6 +25,7 @@ jobs:
       - save_cache:
           paths:
             - ~/.m2
+            - ./node_modules
           key: v0-dependencies-{{ checksum "project.clj" }}-{{ checksum "package.json" }}
 
       # Clojure (JVM)
