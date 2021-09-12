@@ -1,5 +1,8 @@
 # Uniformity
 
+[![Clojars Project](https://img.shields.io/clojars/v/io.github.skinkade/uniformity.svg)](https://clojars.org/io.github.skinkade/uniformity)
+[![CircleCI](https://circleci.com/gh/skinkade/uniformity/tree/main.svg?style=svg)](https://circleci.com/gh/skinkade/uniformity/?branch=main)
+
 `uniformity` is a Clojure(Script) library for easy-to-use cryptographic primitives
 and utilities, aiming for uniform behavior between Clojure platform targets.
 The library should function the same whether you're using it on the JVM
@@ -38,13 +41,24 @@ PBKDF2-HMAC-SHA256 by default.
 ```
 
 ### Random
-`uniformity.random` contains functions for generating crytographically random
-booleans, bytes, 32-bit integers, base64/hex-encoded strings, UUIDs,
-collection samples, and passwords/passphrases.
+`uniformity.random` contains functions for crytographically random:
+- Booleans
+- Bytes
+- 32-bit integers
+- Base64 / Hex strings
+- UUIDs
+- Collection sampling / shuffling
+- Passwords / passphrases
+
 [See documentation](doc/random.md).
 
-`uniformity.util`, at the moment, is largely for encoding/decoding base64/hex,
-JSON serialization, and UTF-8 string encoding/decoding.
+
+### Util
+`uniformity.util`, at the moment, is largely for:
+- Encoding / decoding Base64 / Hex
+- Encoding / decoding UTF-8 strings
+- JSON (de)serialization
+
 Input of encoding functions and output of decoding functions are byte arrays
 (byte[] on JVM, Uint8Array in JS).
 [See documentation](doc/util.md).
