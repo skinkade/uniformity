@@ -13,7 +13,11 @@
 
 (defonce sec-rand (SecureRandom.))
 
-(defn rand-bytes [n]
+(defn rand-bytes
+  ^bytes
+  [^long n]
+  {:pre [(> n 0)]
+   :post [(= n (count %))]}
   (let [bs (byte-array n)]
     (.nextBytes sec-rand bs)
     bs))
@@ -22,10 +26,13 @@
   ([] (rand-int32 (Math/pow 2 31)))
   ([bound]
    {:pre [(<= bound (Math/pow 2 31))
-          (> bound 0)]}
+          (> bound 0)]
+    :post [(< % bound)]}
    (.nextInt sec-rand bound))
   ([lower upper]
-   {:pre [(> upper lower)]}
+   {:pre [(> upper lower)
+          (> lower (Math/pow -2 31))]
+    :post [(>= % lower)]}
    (let [bound (- upper lower)
          result (rand-int32 bound)]
      (+ result lower))))

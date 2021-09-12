@@ -40,10 +40,10 @@
 (defn ^:private reverse-basic-map [m]
   (reduce-kv (fn [acc k v] (assoc acc v k)) {} m))
 
-(defonce cryptopack-fields
+(defonce ^:private cryptopack-fields
   (reverse-basic-map cryptopack-compact-fields))
 
-(defn cryptopack-compact-swap [c target-keys]
+(defn ^:private cryptopack-compact-swap [c target-keys]
   (cond
     (map? c) (reduce-kv
               (fn [acc k v]
@@ -104,9 +104,14 @@
       (cryptopack-compact-swap cryptopack-compact-fields)))
 
 (defn key-from-password
-  ([password] (key-from-password password 100000 (rand-bytes 16)))
+  ([password] (key-from-password password
+                                 100000
+                                 (rand-bytes 16)))
   ([password iterations salt]
-   (let [key (algo/pbkdf2-hmac-sha256 password salt iterations gcm-key-length)]
+   (let [key (algo/pbkdf2-hmac-sha256 password
+                                      salt
+                                      iterations
+                                      gcm-key-length)]
      {:key-type :password
       :key key
       :kdf-params {:kdf :pbkdf2-hmac-sha256
@@ -132,10 +137,14 @@
         key-slot {:cipher :aes-gcm
                   :nonce nonce
                   :key-type key-type
-                  :encrypted-key (algo/aes-gcm-encrypt dek kek nonce)}]
+                  :encrypted-key (algo/aes-gcm-encrypt dek
+                                                       kek
+                                                       nonce)}]
     (case key-type
       :binary key-slot
-      :password (assoc key-slot :kdf-params (:kdf-params keypack)))))
+      :password (assoc key-slot
+                       :kdf-params
+                       (:kdf-params keypack)))))
 
 (defn decrypt-dek-with-key
   [key slot]

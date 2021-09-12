@@ -6,12 +6,20 @@
     (js/require "crypto")
     (catch :default _ nil)))
 
-(def rand-bytes
+(defonce rand-bytes
   (if (nil? crypto)
-    (fn [n] (let [bs (js/Uint8Array. n)]
-              (. js/window.crypto getRandomValues bs)
-              bs))
-    (fn [n] (. ^object crypto randomBytes n))))
+    (fn ^js/Uint8Array [^number n]
+      {:pre [(> n 0)]
+       :post [(= n (.-length %))]}
+      (let [bs (js/Uint8Array. n)]
+        (. js/window.crypto getRandomValues bs)
+        bs))
+    (fn ^js/Uint8Array [^number n]
+      {:pre [(> n 0)]
+       :post [(= n (.-length %))]}
+      (->> n
+           (. ^object crypto randomBytes)
+           js/Uint8Array.))))
 
 ;; 48-bit int can is the largest that can be contained within a double in JS
 (defonce ^:private rand-max 0xFFFFFFFFFFFF)
@@ -27,21 +35,24 @@
      (aget bytes 5))))
 
 (defn rand-int32
-  ([] (rand-int32 0 (Math/pow 2 31)))
-  ([max] (rand-int32 0 max))
-  ([min max]
+  (^number [] (rand-int32 0 (Math/pow 2 31)))
+  (^number [^number max] (rand-int32 0 max))
+  (^number [^number min
+            ^number max]
    {:pre [(> max min)
           (<= (- max min) rand-max)
           (.isSafeInteger js/Number min)
-          (.isSafeInteger js/Number max)]}
+          (.isSafeInteger js/Number max)]
+    :post [(< % max)
+           (>= % min)]}
    (let [range (- max min)
          rand-limit (- rand-max (mod rand-max range))]
-         (loop [x (rand-uint48be)]
-     (if (< x rand-limit)
-       (+ (mod x range) min)
-       (recur (rand-uint48be)))))))
+     (loop [x (rand-uint48be)]
+       (if (< x rand-limit)
+         (+ (mod x range) min)
+         (recur (rand-uint48be)))))))
 
-(defn rand-uuid []
+(defn rand-uuid ^uuid []
   (let [bytes (rand-bytes 16)
         hex (map byte->hex bytes)
         version (-> (aget bytes 6)

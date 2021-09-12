@@ -6,7 +6,14 @@
            [javax.crypto.spec GCMParameterSpec]))
 
 (defn pbkdf2-hmac-sha256
-  [password salt iterations key-length]
+  ^bytes
+  [^String password
+   ^bytes salt
+   ^long iterations
+   ^long key-length]
+  {:pre [(>= (count salt) 16)
+         (>= iterations 1000)]
+   :post [(= key-length (* 8 (count %)))]}
   (let [pw-chars (.toCharArray password)
         kdf (SecretKeyFactory/getInstance "PBKDF2WithHmacSHA256")
         key-spec (PBEKeySpec. pw-chars salt iterations key-length)

@@ -3,7 +3,19 @@
             [uniformity.util :as util]))
 
 (defn pbkdf2-hmac-sha256
-  [password salt iterations key-length-bits]
+  ^js/Uint8Array
+  [password
+   ^js/Uint8Array salt
+   ^number iterations
+   ^number key-length-bits]
+  {:pre [(or
+          (string? password)
+          (instance? js/Uint8Array password))
+         (>= (.-length salt) 16)
+         (>= iterations 1000)
+         (= 0 (mod key-length-bits 8))]
+   :post [(= (.-length %)
+             (/ key-length-bits 8))]}
   (let [password (if (string? password)
                    (util/str->utf8 password)
                    password)
@@ -14,10 +26,13 @@
 (defonce ^:private gcm-nonce-length (/ 96 8))
 
 (defn aes-gcm-encrypt
-  [plaintext key nonce
+  ^js/Uint8Array
+  [^js/Uint8Array plaintext
+   ^js/Uint8Array key
+   ^js/Uint8Array nonce
    & {:keys [aad] :or {aad []}}]
-  {:pre [(contains? #{16 24 32} (aget key "length"))
-         (= gcm-nonce-length (aget nonce "length"))]}
+  {:pre [(contains? #{16 24 32} (.-length key))
+         (= gcm-nonce-length (.-length nonce))]}
   (.encrypt asmcrypto/AES_GCM
             plaintext
             key
@@ -26,10 +41,13 @@
             gcm-tag-length))
 
 (defn aes-gcm-decrypt
-  [ciphertext key nonce
+  ^js/Uint8Array
+  [^js/Uint8Array ciphertext
+   ^js/Uint8Array key
+   ^js/Uint8Array nonce
    & {:keys [aad] :or {aad []}}]
-  {:pre [(contains? #{16 24 32} (aget key "length"))
-         (= gcm-nonce-length (aget nonce "length"))]}
+  {:pre [(contains? #{16 24 32} (.-length key))
+         (= gcm-nonce-length (.-length nonce))]}
   (.decrypt asmcrypto/AES_GCM
             ciphertext
             key
