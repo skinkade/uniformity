@@ -43,7 +43,7 @@
 (defonce ^:private cryptopack-fields
   (reverse-basic-map cryptopack-compact-fields))
 
-(defn ^:private cryptopack-compact-swap [c target-keys]
+(defn cryptopack-compact-swap [c target-keys]
   (cond
     (map? c) (reduce-kv
               (fn [acc k v]
@@ -52,15 +52,30 @@
                        (cryptopack-compact-swap v target-keys)))
               {} c)
     (coll? c) (mapv #(cryptopack-compact-swap % target-keys) c)
-    (compat-bytes? c) (str "b64:" (util/base64-encode-urlsafe c))
-    (and (string? c)
-         (> (compat-count c) 4)
-         (= "b64:" (subs c 0 4))) (util/base64-decode (subs c 4))
     (or (string? c) (keyword? c)) (if
                                    (contains? target-keys c)
                                     (get target-keys c)
                                     c)
     :else c))
+
+(defn base64-bytes-swap [obj]
+  (cond (compat-bytes? obj)
+        (str "b64:" (util/base64-encode-urlsafe obj))
+
+        (and (string? obj)
+             (> (count obj) 4)
+             (= "b64:" (subs obj 0 4)))
+        (util/base64-decode (subs obj 4))
+
+        (map? obj)
+        (reduce-kv (fn [acc k v] (assoc acc k (base64-bytes-swap v)))
+                   {}
+                   obj)
+
+        (coll? obj)
+        (mapv base64-bytes-swap obj)
+
+        :default obj))
 
 (defn pkcs7-pad-bytes
   [bytes boundary]
@@ -95,12 +110,24 @@
 (defn cryptopack->json [cryptopack]
   (as-> cryptopack c
     (cryptopack-compact-swap c cryptopack-fields)
+    (base64-bytes-swap c)
     (util/json-encode c)
     (subs c 1 (dec (compat-count c))))) ; bug: data.json wraps in an array
 
 (defn json->cryptopack [json]
   (-> json
       (util/json-decode)
+      (base64-bytes-swap)
+      (cryptopack-compact-swap cryptopack-compact-fields)))
+
+(defn cryptopack->msgpack [cryptopack]
+  (-> cryptopack
+    (cryptopack-compact-swap cryptopack-fields)
+    util/msgpack-serialize))
+
+(defn msgpack->cryptopack [msgpack]
+  (-> msgpack
+      util/msgpack-deserialize
       (cryptopack-compact-swap cryptopack-compact-fields)))
 
 (defn key-from-password

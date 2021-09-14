@@ -4,6 +4,8 @@
             [clojure.string :refer [replace]]
             [uniformity.internals.validation :refer [compat-count]]))
 
+(def msgpack ((js/require "msgpack5")))
+
 (defn base64-encode
   ^String [^js/Uint8Array bytes]
   (base64/encodeByteArray bytes))
@@ -55,6 +57,18 @@
   (->> string
        (.parse js/JSON)
        (js->clj)))
+
+(defn msgpack-serialize
+  ^js/Uint8Array [object]
+  (->> object
+       clj->js
+       (.encode msgpack)))
+
+(defn msgpack-deserialize
+  [^bytes bytes]
+  (->> bytes
+       (.decode msgpack)
+       js->clj))
 
 ;; super hacky!
 (defn str->utf8

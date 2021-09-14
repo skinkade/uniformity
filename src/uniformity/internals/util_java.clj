@@ -1,5 +1,7 @@
 (ns uniformity.internals.util-java
-  (:require [clojure.data.json :as json])
+  (:require [clojure.data.json :as json]
+            [msgpack.core :as msg]
+            [msgpack.clojure-extensions])
   (:import [org.apache.commons.codec.binary Base64 Hex]))
 
 (defn base64-encode
@@ -29,6 +31,12 @@
 (defn json-decode
   [^String string]
   (json/read-str string))
+
+(defn msgpack-serialize ^bytes [obj]
+  (msg/pack obj))
+
+(defn msgpack-deserialize [^bytes msgpack]
+  (msg/unpack msgpack))
 
 (defn str->utf8
   ^bytes [^String string]

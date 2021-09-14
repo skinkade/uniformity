@@ -25,6 +25,7 @@ Plaintext strings are treated as UTF-8 bytes.
 
 `encrypt` can take two additional flags:
 - `:json` makes a compact cryptopack and serializes it to JSON
+- `:msgpack` makes a compact cryptopack and serializes it to a msgpack byte array
 - `:padded` - while AES-GCM internally pads plaintext to intervals of 16 bytes,
   this flag enables pre-emptive padding so that the length of the ciphertext
   does not match that of the plaintext

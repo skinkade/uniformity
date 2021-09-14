@@ -21,6 +21,8 @@ or `crypto.randomBytes` in Node.js.
 and strings with AES-GCM, using passwords and/or keys.
 Passwords are treated as UTF-8 strings and processed with 100,000 rounds of
 PBKDF2-HMAC-SHA256 by default.
+
+Output can be chosen to be a Clojure map, JSON, or msgpack.
 [See documentation](doc/crypto.md).
 
 ```clojure
@@ -58,6 +60,7 @@ PBKDF2-HMAC-SHA256 by default.
 - Encoding / decoding Base64 / Hex
 - Encoding / decoding UTF-8 strings
 - JSON (de)serialization
+- msgpack (de)serialization
 
 Input of encoding functions and output of decoding functions are byte arrays
 (byte[] on JVM, Uint8Array in JS).

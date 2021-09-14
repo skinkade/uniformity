@@ -75,3 +75,36 @@
 (deftest json-unicode-password
   (is test-plaintext-string
       (decrypt test-json unicode-password)))
+
+
+
+;; msgpack tests
+
+(def test-msgpack-file "test/uniformity/msgpack-test.bin")
+
+;; Test binary generated with:
+(comment
+  (def msgpack-ciphertext
+    (encrypt test-plaintext-string
+             [test-password unicode-password]
+             :padded :msgpack))
+  (with-open [output (java.io.FileOutputStream. test-msgpack-file)]
+    (.write output msgpack-ciphertext)))
+
+(def msgpack-test-bytes
+  #?(:clj (with-open [out (java.io.ByteArrayOutputStream.)]
+            (clojure.java.io/copy
+             (clojure.java.io/input-stream test-msgpack-file)
+             out)
+            (.toByteArray out))
+     :cljs (let [fs (js/require "fs")]
+             (.readFileSync fs test-msgpack-file))
+     :default nil))
+
+(deftest msgpack-simple-password
+  (is test-plaintext-string
+      (decrypt msgpack-test-bytes test-password)))
+
+(deftest msgpack-unicode-password
+  (is test-plaintext-string
+      (decrypt msgpack-test-bytes unicode-password)))

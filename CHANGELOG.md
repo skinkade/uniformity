@@ -1,6 +1,10 @@
 # Change Log
 All notable changes to this project will be documented in this file. This change log follows the conventions of [keepachangelog.com](http://keepachangelog.com/).
 
+## [0.2.2]
+### Added
+messagepack support for uniformity.random's encrypt and decrypt
+
 ## [0.2.1]
 ### Added
 rand-shuffle function to uniformity.random
@@ -24,6 +28,7 @@ JVM and ClojureScript support for cryptographically-random:
 - collection samples
 - passwords/passphrases
 
+[0.2.1]: https://github.com/skinkade/uniformity/compare/v0.2.1...v0.2.2
 [0.2.1]: https://github.com/skinkade/uniformity/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/skinkade/uniformity/compare/v0.1.1...v0.2.0
 [0.1.1]: https://github.com/skinkade/uniformity/compare/v0.1.0...v0.1.1

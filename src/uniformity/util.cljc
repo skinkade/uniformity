@@ -23,6 +23,12 @@
 (defn json-decode [string]
   (internals/json-decode string))
 
+(defn msgpack-serialize [object]
+  (internals/msgpack-serialize object))
+
+(defn msgpack-deserialize [bytes]
+  (internals/msgpack-deserialize bytes))
+
 (defn str->utf8 [string]
   (internals/str->utf8 string))
 

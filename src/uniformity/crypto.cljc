@@ -48,6 +48,7 @@
    and the ciphertext.
    
    Add `:json` to return a JSON string with compact field names.
+   Add `:msgpack` to return a msgpack byte array with compact field names.
    Add `:padded` to PKCS#7-pad plaintext to nearest 16 bytes to hide
    exact plaintext length."
   [plaintext
@@ -64,6 +65,7 @@
   (let [flags (set (flatten flags))
         padded (:padded flags)
         json (:json flags)
+        msgpack (:msgpack flags)
         from-str (string? plaintext)
         plaintext (if from-str
                     (util/str->utf8 plaintext)
@@ -90,9 +92,12 @@
         cryptopack (if (empty? pack-flags)
                      cryptopack
                      (assoc cryptopack :flags pack-flags))]
-    (if json
-      (proc/cryptopack->json cryptopack)
-      cryptopack)))
+    (when (and json msgpack)
+      (throw (ex-info ":json and :msgpack cannot be used together"
+                      {:bad-flags-args flags})))
+    (cond json (proc/cryptopack->json cryptopack)
+          msgpack (proc/cryptopack->msgpack cryptopack)
+          :default cryptopack)))
 
 (defn decrypt
   " Decrypt ciphertext using one of the provided keys.
@@ -105,13 +110,14 @@
   [ciphertext key]
   {:pre [(or
           (string? ciphertext)
-          (map? ciphertext))
+          (map? ciphertext)
+          (compat-bytes? ciphertext))
          (or
           (string? key)
           (compat-bytes? key))]}
-  (let [cryptopack (if (string? ciphertext)
-                     (proc/json->cryptopack ciphertext)
-                     ciphertext)
+  (let [cryptopack (cond (string? ciphertext) (proc/json->cryptopack ciphertext)
+                         (compat-bytes? ciphertext) (proc/msgpack->cryptopack ciphertext)
+                         :default ciphertext)
         flags (if (contains? cryptopack :flags)
                 (set (:flags cryptopack))
                 #{})
