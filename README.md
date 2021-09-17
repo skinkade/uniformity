@@ -3,6 +3,9 @@
 [![Clojars Project](https://img.shields.io/clojars/v/io.github.skinkade/uniformity.svg)](https://clojars.org/io.github.skinkade/uniformity)
 [![CircleCI](https://circleci.com/gh/skinkade/uniformity/tree/main.svg?style=svg)](https://circleci.com/gh/skinkade/uniformity/?branch=main)
 
+**This library is an unstable work-in-progress and breaking changes are
+expected in coming releases.**
+
 `uniformity` is a Clojure(Script) library for easy-to-use cryptographic primitives
 and utilities, aiming for uniform behavior between Clojure platform targets.
 The library should function the same whether you're using it on the JVM
