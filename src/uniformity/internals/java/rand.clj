@@ -1,4 +1,4 @@
-(ns uniformity.internals.rand-java
+(ns uniformity.internals.java.rand
   (:import java.security.SecureRandom))
 
 ;; Performance notes:

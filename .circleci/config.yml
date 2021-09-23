@@ -32,7 +32,7 @@ jobs:
       - run: lein test
 
       # ClojureScript
-      - run: npx shadow-cljs compile test
+      - run: npx shadow-cljs compile node-test
 
 workflows:
   build:

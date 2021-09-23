@@ -1,4 +1,4 @@
-(ns uniformity.internals.util-java
+(ns uniformity.internals.java.util
   (:require [clojure.data.json :as json]
             [msgpack.core :as msg]
             [msgpack.clojure-extensions])

@@ -1,25 +1,28 @@
-(ns uniformity.internals.rand-js
-  (:require [uniformity.internals.util-js :refer [byte->hex]]))
+(ns uniformity.internals.js.rand
+  (:require [uniformity.internals.js.node-browser-compat :refer [crypto-type crypto]]
+            [uniformity.internals.js.util :refer [byte->hex]]))
 
-(defonce ^:private crypto
-  (try
-    (js/require "crypto")
-    (catch :default _ nil)))
+(defn ^:private browser-rand-bytes
+  ^js/Uint8Array
+  [^number n]
+  {:pre [(> n 0)]
+   :post [(= n (.-length %))]}
+  (let [bs (js/Uint8Array. n)]
+    (. ^Object crypto getRandomValues bs)
+    bs))
 
-(defonce rand-bytes
-  (if (nil? crypto)
-    (fn ^js/Uint8Array [^number n]
-      {:pre [(> n 0)]
-       :post [(= n (.-length %))]}
-      (let [bs (js/Uint8Array. n)]
-        (. js/window.crypto getRandomValues bs)
-        bs))
-    (fn ^js/Uint8Array [^number n]
-      {:pre [(> n 0)]
-       :post [(= n (.-length %))]}
-      (->> n
-           (. ^object crypto randomBytes)
-           js/Uint8Array.))))
+(defn ^:private node-rand-bytes
+  ^js/Uint8Array
+  [^number n]
+  {:pre [(> n 0)]
+   :post [(= n (.-length %))]}
+    (js/Uint8Array.
+     (. ^Object crypto randomBytes n)))
+
+(def rand-bytes
+  (if (= :browser crypto-type)
+    browser-rand-bytes
+    node-rand-bytes))
 
 ;; 48-bit int can is the largest that can be contained within a double in JS
 (defonce ^:private rand-max 0xFFFFFFFFFFFF)
@@ -71,3 +74,7 @@
       variant (nth hex 9) "-"
       (nth hex 10) (nth hex 11) (nth hex 12)
       (nth hex 13) (nth hex 14) (nth hex 15)))))
+
+(comment
+  (def _bs (rand-bytes 16))
+  (def _hex (map byte->hex _bs)))

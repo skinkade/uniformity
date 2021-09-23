@@ -1,6 +1,15 @@
 # Change Log
 All notable changes to this project will be documented in this file. This change log follows the conventions of [keepachangelog.com](http://keepachangelog.com/).
 
+## [0.3.0]
+### Added
+RSA support
+Crypto module exposing AES-GCM, RSA, PBKDF2
+### Changed
+Encryption functionality is now async
+Cryptopacks have been moved to their own module
+cryptopack/encrypt is now keyword-based for its arguments
+
 ## [0.2.2]
 ### Added
 messagepack support for uniformity.random's encrypt and decrypt
@@ -28,7 +37,8 @@ JVM and ClojureScript support for cryptographically-random:
 - collection samples
 - passwords/passphrases
 
-[0.2.1]: https://github.com/skinkade/uniformity/compare/v0.2.1...v0.2.2
+[0.3.0]: https://github.com/skinkade/uniformity/compare/v0.2.2...v0.3.0
+[0.2.2]: https://github.com/skinkade/uniformity/compare/v0.2.1...v0.2.2
 [0.2.1]: https://github.com/skinkade/uniformity/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/skinkade/uniformity/compare/v0.1.1...v0.2.0
 [0.1.1]: https://github.com/skinkade/uniformity/compare/v0.1.0...v0.1.1

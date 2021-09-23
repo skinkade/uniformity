@@ -1,6 +1,5 @@
 {
   "dependencies": {
-    "asmcrypto.js": "^2.3.2",
     "msgpack5": "^5.3.2",
     "shadow-cljs": "^2.15.2"
   }

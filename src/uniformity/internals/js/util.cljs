@@ -1,10 +1,11 @@
-(ns uniformity.internals.util-js
-  (:require [goog.crypt :refer [byteArrayToHex hexToByteArray]]
+(ns uniformity.internals.js.util
+    (:require [goog.crypt :refer [byteArrayToHex hexToByteArray]]
             [goog.crypt.base64 :as base64]
-            [clojure.string :refer [replace]]
+            [clojure.string :as string]
+            ["msgpack5" :as msgpack5]
             [uniformity.internals.validation :refer [compat-count]]))
 
-(def msgpack ((js/require "msgpack5")))
+(defonce msgpack (msgpack5))
 
 (defn base64-encode
   ^String [^js/Uint8Array bytes]
@@ -14,9 +15,9 @@
   ^String [^js/Uint8Array bytes]
   (-> bytes
       (base64-encode)
-      (replace "+" "-")
-      (replace "/" "_")
-      (replace "=" "")))
+      (string/replace "+" "-")
+      (string/replace "/" "_")
+      (string/replace "=" "")))
 
 (defn ^:private pad-base64 [string]
   (if (= 0 (mod (compat-count string) 4))
@@ -27,8 +28,8 @@
 (defn base64-decode
   ^js/Uint8Array [^String string]
   (let [string (-> string
-                   (replace "-" "+")
-                   (replace "_" "/")
+                   (string/replace "-" "+")
+                   (string/replace "_" "/")
                    (pad-base64))]
     (base64/decodeStringToUint8Array string)))
 

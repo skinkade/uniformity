@@ -1,6 +1,6 @@
 (ns uniformity.util
-  (:require #?(:clj [uniformity.internals.util-java :as internals]
-               :cljs [uniformity.internals.util-js :as internals])))
+  (:require #?(:clj [uniformity.internals.java.util :as internals]
+               :cljs [uniformity.internals.js.util :as internals])))
 
 (defn base64-encode [bytes]
   (internals/base64-encode bytes))

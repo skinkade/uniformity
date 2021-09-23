@@ -17,3 +17,5 @@ pom.xml.asc
 /.lsp
 /.shadow-cljs
 /node_modules
+/ssl
+/.clj-kondo

@@ -3,8 +3,8 @@
             [clojure.string :as string]
             [uniformity.internals.validation :refer [compat-count]]
             [uniformity.util :as util]
-            #?(:clj [uniformity.internals.rand-java :as internals]
-               :cljs [uniformity.internals.rand-js :as internals])))
+            #?(:clj [uniformity.internals.java.rand :as internals]
+               :cljs [uniformity.internals.js.rand :as internals])))
 
 (defn rand-bytes
   "Generate an array of n cryptographically random bytes"
