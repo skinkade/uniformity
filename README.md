@@ -47,6 +47,11 @@ Output can be chosen to be a Clojure map, JSON, or msgpack.
 [See documentation](doc/random.md).
 
 
+### Hash
+`uniformity.hash` provides MD5 and SHA2 family hashing.
+[See examples](doc/hash.md).
+
+
 ### Util
 `uniformity.util`, at the moment, is largely for:
 - Encoding / decoding Base64 / Hex
