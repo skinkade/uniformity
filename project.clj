@@ -1,4 +1,4 @@
-(defproject io.github.skinkade/uniformity "0.3.1"
+(defproject io.github.skinkade/uniformity "0.3.2"
   :description "A Clojure(Script) library for easy-to-use cryptography"
   :url "https://github.com/skinkade/uniformity"
   :license {:name "EPL-2.0 OR GPL-2.0-or-later WITH Classpath-exception-2.0"

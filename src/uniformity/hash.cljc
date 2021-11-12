@@ -79,8 +79,8 @@
   (if (not= (count hash1) (count hash2))
     false
     (reduce (fn [equals idx]
-              (and equals
-                   (= (get hash1 idx)
-                      (get hash2 idx))))
+              (and (= (get hash1 idx)
+                      (get hash2 idx))
+                   equals))
             true
             (range (count hash1)))))
