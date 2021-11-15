@@ -78,9 +78,10 @@
   [hash1 hash2]
   (if (not= (count hash1) (count hash2))
     false
-    (reduce (fn [equals idx]
-              (and (= (get hash1 idx)
-                      (get hash2 idx))
-                   equals))
-            true
-            (range (count hash1)))))
+    (= 0
+       (reduce (fn [equals idx]
+                 (bit-or equals
+                         (bit-xor (int (get hash1 idx))
+                                  (int (get hash2 idx)))))
+               0
+               (range (count hash1))))))
