@@ -74,7 +74,3 @@
       variant (nth hex 9) "-"
       (nth hex 10) (nth hex 11) (nth hex 12)
       (nth hex 13) (nth hex 14) (nth hex 15)))))
-
-(comment
-  (def _bs (rand-bytes 16))
-  (def _hex (map byte->hex _bs)))

@@ -14,15 +14,15 @@
 (defn ^:private parse-key-args [aes-key password rsa-pubkey]
   (go-try
    (let [;; these ugly loops are here becaue async makes `map` calls buggy
-     aes-keys (cond (nil? aes-key) nil
+         aes-keys (cond (nil? aes-key) nil
                         (vector? aes-key)  (loop [i 0
-                                                 acc []]
-                                            (if (= i (count aes-key))
-                                              acc
-                                              (let [key (nth aes-key i)
-                                                    key (proc/key-from-binary key)]
-                                                (recur (inc i)
-                                                       (conj acc key)))))
+                                                  acc []]
+                                             (if (= i (count aes-key))
+                                               acc
+                                               (let [key (nth aes-key i)
+                                                     key (proc/key-from-binary key)]
+                                                 (recur (inc i)
+                                                        (conj acc key)))))
                         :else (proc/key-from-binary aes-key))
          password-keys (cond (nil? password) nil
                              (vector? password) (loop [i 0
@@ -144,7 +144,7 @@
                  (set (:flags cryptopack))
                  #{})
          valid-key (<? (proc/find-valid-decrypt-key (:key-slots cryptopack)
-                                                aes-key password rsa-privkey))
+                                                    aes-key password rsa-privkey))
          plaintext (<? (core/aes-gcm-decrypt
                         (:ciphertext cryptopack)
                         valid-key
