@@ -2,7 +2,8 @@
   (:require [uniformity.random :refer [rand-bytes]]
             [uniformity.util :as util]
             [uniformity.crypto.core :as core]
-            [uniformity.internals.crypto.processing :as proc]
+            [uniformity.internals.cryptopack.processing :as proc]
+            [uniformity.internals.cryptopack.format :as fmt]
             [uniformity.internals.validation :refer [compat-bytes?
                                                      compat-byte-array
                                                      compat-count]]
@@ -115,8 +116,8 @@
          cryptopack (if (empty? pack-flags)
                       cryptopack
                       (assoc cryptopack :flags pack-flags))]
-     (cond (= :json output) (proc/cryptopack->json cryptopack)
-           (= :msgpack output) (proc/cryptopack->msgpack cryptopack)
+     (cond (= :json output) (fmt/cryptopack->json cryptopack)
+           (= :msgpack output) (fmt/cryptopack->msgpack cryptopack)
            (= :map output) cryptopack
            :else (throw (ex-info "Invalid output type specified"
                                  {:output output}))))))
@@ -137,9 +138,7 @@
    & {:keys [aes-key password rsa-privkey output]
       :or {output :bytes}}]
   (go-try
-   (let [cryptopack (cond (string? ciphertext) (proc/json->cryptopack ciphertext)
-                          (compat-bytes? ciphertext) (proc/msgpack->cryptopack ciphertext)
-                          :else ciphertext)
+   (let [cryptopack (fmt/derive-cryptopack ciphertext)
          flags (if (contains? cryptopack :flags)
                  (set (:flags cryptopack))
                  #{})

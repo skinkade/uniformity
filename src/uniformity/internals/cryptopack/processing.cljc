@@ -1,4 +1,4 @@
-(ns uniformity.internals.crypto.processing
+(ns uniformity.internals.cryptopack.processing
   (:require [uniformity.internals.validation :refer [compat-bytes?
                                                      compat-byte-array
                                                      compat-count]]
@@ -9,83 +9,6 @@
                :cljs [cljs.core.async] :refer-macros [go])
             #?(:clj  [async-error.core :refer [go-try <?]]
                :cljs [async-error.core :refer-macros [go-try <?]])))
-
-(defn throw-ex [ex]
-  #?(:clj (throw (Exception. ex))
-     :cljs (throw (js/Error. ex))))
-
-;; (defonce gcm-key-length 128)
-;; (defonce gcm-nonce-length 96)
-
-(defonce cryptopack-compact-fields {;; Top level
-                                    "c" :cipher
-                                    "gcm" :aes-gcm
-                                    "n" :nonce
-                                    "ks" :key-slots
-                                    "ct" :ciphertext
-                                    "fl" :flags
-                                    ;; Slots
-                                    "kg" :key-guid ; future feature
-                                    "kt" :key-type
-                                    "p" :password
-                                    "b" :binary
-                                    "rsa" :rsa
-                                    "oaep" :rsa-oaep
-                                    "ek" :encrypted-key
-                                    "kp" :kdf-params
-                                    ;; KDF params
-                                    "fn" :kdf
-                                    "pb2" :pbkdf2
-                                    "h" :hash
-                                    "s1" :sha1
-                                    "s256" :sha256
-                                    "s384" :sha384
-                                    "s512" :sha512
-                                    "it" :iterations
-                                    "sa" :salt
-                                    "kl" :key-length
-                                    ;; Flags
-                                    "pd" :padded})
-
-(defn ^:private reverse-basic-map [m]
-  (reduce-kv (fn [acc k v] (assoc acc v k)) {} m))
-
-(defonce ^:private cryptopack-fields
-  (reverse-basic-map cryptopack-compact-fields))
-
-(defn cryptopack-compact-swap [c target-keys]
-  (cond
-    (map? c) (reduce-kv
-              (fn [acc k v]
-                (assoc acc
-                       (cryptopack-compact-swap k target-keys)
-                       (cryptopack-compact-swap v target-keys)))
-              {} c)
-    (coll? c) (mapv #(cryptopack-compact-swap % target-keys) c)
-    (or (string? c) (keyword? c)) (if
-                                   (contains? target-keys c)
-                                    (get target-keys c)
-                                    c)
-    :else c))
-
-(defn base64-bytes-swap [obj]
-  (cond (compat-bytes? obj)
-        (str "b64:" (util/base64-encode-urlsafe obj))
-
-        (and (string? obj)
-             (> (count obj) 4)
-             (= "b64:" (subs obj 0 4)))
-        (util/base64-decode (subs obj 4))
-
-        (map? obj)
-        (reduce-kv (fn [acc k v] (assoc acc k (base64-bytes-swap v)))
-                   {}
-                   obj)
-
-        (coll? obj)
-        (mapv base64-bytes-swap obj)
-
-        :else obj))
 
 (defn pkcs7-pad-bytes
   [bytes boundary]
@@ -109,32 +32,11 @@
         new-len (- len pad)]
     (when
      (not (every? #(= pad %) padding))
-      (throw-ex "Padding bytes do not all match"))
+      (throw (ex-info "Padding bytes do not all match"
+                      {:pad pad
+                       :padding padding})))
     (compat-byte-array
      (take new-len bytes))))
-
-(defn cryptopack->json [cryptopack]
-  (as-> cryptopack c
-    (cryptopack-compact-swap c cryptopack-fields)
-    (base64-bytes-swap c)
-    (util/json-encode c)
-    (subs c 1 (dec (compat-count c))))) ; bug: data.json wraps in an array
-
-(defn json->cryptopack [json]
-  (-> json
-      (util/json-decode)
-      (base64-bytes-swap)
-      (cryptopack-compact-swap cryptopack-compact-fields)))
-
-(defn cryptopack->msgpack [cryptopack]
-  (-> cryptopack
-      (cryptopack-compact-swap cryptopack-fields)
-      util/msgpack-serialize))
-
-(defn msgpack->cryptopack [msgpack]
-  (-> msgpack
-      util/msgpack-deserialize
-      (cryptopack-compact-swap cryptopack-compact-fields)))
 
 (defn key-from-password
   [password & {:keys [params]}]
@@ -230,5 +132,6 @@
          successes (filter some? attempts)
          valid-key (first successes)]
      (if (nil? valid-key)
-       (throw-ex "Could not find valid key within slots")
+       (throw (ex-info "Could not find valid key within slots"
+                       {}))
        valid-key))))

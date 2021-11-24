@@ -8,7 +8,6 @@
                :cljs [async-error.core :refer-macros [go-try <?]])
             #?(:clj  [clojure.core.async :refer [go <!]]
                :cljs [cljs.core.async] :refer-macros [go <!])
-            ;; [uniformity.internals.crypto.processing :as proc]
             #?(:clj  [uniformity.internals.java.aes :as aes]
                :cljs [uniformity.internals.js.aes :as aes])
             #?(:clj  [uniformity.internals.java.rsa :as rsa]

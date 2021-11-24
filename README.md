@@ -16,7 +16,70 @@ The library is effectively a wrapper for the following:
 - Browser: `window.crypto.getRandomValues` and the SubtleCrypto Web API
   * Note that SubtleCrypto, and therefore this library, are only usable in HTTPS contexts
 
+## Examples
 
+```clojure
+(ns com.example
+  (:require [uniformity.random :as r]
+            [uniformity.crypto.core :as crypto]
+            [uniformity.crypto.cryptopack :as pack]
+            [clojure.core.async :refer [go <! <!!]]))
+```
+
+### Random value generation
+
+```clojure
+(r/rand-int32)
+;; => 987787792
+
+(r/rand-int32 100 1000)
+;; => 646
+
+(r/rand-web-token (/ 128 8))
+;; => "FdZsrHmH7aJEvyC4L7HOcw"
+
+(r/rand-uuid)
+;; => #uuid "56ad902d-332a-41ec-9b34-13f3e048bfcc"
+
+(def selections [:a :b :c :d :e :f :g :h :i :j :k :l :m :n :o :p])
+
+(r/rand-selection selections)
+;; => :j
+
+(r/rand-selection selections 5)
+;; => (:l :c :j :k :i)
+
+(r/rand-shuffle selections)
+;; => [:d :p :f :j :i :m :e :b :o :g :h :c :k :n :a :l]
+```
+
+### High-level async encryption with cryptopacks
+
+```clojure
+(def enc-key (r/rand-bytes 16))
+
+(go
+  (let [plaintext (byte-array [1 2 3 4])
+        ciphertext (<! (pack/encrypt plaintext
+                                     :aes-key enc-key))
+        decrypted (<! (pack/decrypt ciphertext
+                                    :aes-key enc-key))]
+    (println (vec decrypted))))
+
+;; Multiple keys of different types can be used
+;; String plaintext will be decoded as UTF8 bytes,
+;; When decrypting, specify :output :string for the result to be treated as UTF8
+(go
+  (let [plaintext "Hello world!"
+        ciphertext (<! (pack/encrypt plaintext
+                                     :password ["A strong password",
+                                                "some-gibberish-string"]
+                                     :aes-key enc-key))
+        decrypted (<! (pack/decrypt ciphertext
+                                    :password "A strong password"
+                                    :output :string))]
+  (println decrypted)))
+```
 
 ## Modules
 
